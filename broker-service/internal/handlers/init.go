@@ -1,21 +1,18 @@
 package handlers
 
 import (
+	"broker/internal/helpers"
 	"encoding/json"
 	"net/http"
 )
 
-type jsonResponse struct {
-	Error   bool   `json:"error"`
-	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
-}
-
 func Broker(w http.ResponseWriter, r *http.Request) {
-	payload := jsonResponse{
+	payload := helpers.JsonResponse{
 		Error:   false,
 		Message: "Hit The Broker",
 	}
+
+	helpers.WriteJSON(w, http.StatusOK, payload)
 
 	out, _ := json.MarshalIndent(payload, "", "\t")
 	w.Header().Set("Content-Type", "application/json")
