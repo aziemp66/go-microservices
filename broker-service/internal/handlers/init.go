@@ -11,5 +11,8 @@ func Broker(w http.ResponseWriter, r *http.Request) {
 		Message: "Hit The Broker",
 	}
 
-	helpers.WriteJSON(w, http.StatusOK, payload)
+	err := helpers.WriteJSON(w, http.StatusOK, payload)
+	if err != nil {
+		helpers.ErrorJSON(w, r, err, http.StatusBadRequest)
+	}
 }
