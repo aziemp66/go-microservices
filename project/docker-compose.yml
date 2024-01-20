@@ -14,7 +14,7 @@ services:
   postgres:
     image: "postgres:14.2"
     ports:
-      - "5432:5432"
+      - "6543:5432"
     deploy:
       mode: replicated
       replicas: 1
@@ -34,3 +34,18 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+  authentication-service:
+    build:
+      context: ../authentication-service
+      dockerfile: ../authentication-service/authentication-service.dockerfile
+    restart: always
+    ports:
+      - "8081:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      - "DSN=host=postgres port=5432 user=postgres password=password dbname=postgres sslmode=disable timezone=Asia/Jakarta connect_timeout=5"
+    depends_on:
+      - postgres
+      - broker-service

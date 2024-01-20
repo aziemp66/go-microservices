@@ -29,7 +29,7 @@ func main() {
 
 	// Connect to DB
 	conn := connectToDB()
-	if conn != nil {
+	if conn == nil {
 		log.Panic("Can't Connect to Postgres")
 	}
 
