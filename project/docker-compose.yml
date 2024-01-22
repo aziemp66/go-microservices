@@ -34,6 +34,8 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    volumes:
+      - ../broker-service/logs:/app/logs
   authentication-service:
     build:
       context: ../authentication-service
@@ -44,6 +46,8 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    volumes:
+      - ../authentication-service/logs:/app/logs
     environment:
       - "DSN=host=postgres port=5432 user=postgres password=password dbname=postgres sslmode=disable timezone=Asia/Jakarta connect_timeout=5"
     depends_on:

@@ -1,32 +1,21 @@
 package main
 
 import (
-	"broker/internal/routes"
+	broker_controller "broker/internal/controller/broker"
+	http_server "broker/internal/http"
 	"fmt"
 	"log"
-	"net/http"
 )
 
 const WebPort = "80"
 
-type Config struct {
-	Routes http.Handler
-}
-
 func main() {
-	app := Config{
-		Routes: routes.Routes(),
-	}
-
 	log.Printf("Starting Broker Services at port : %s\n", WebPort)
 
-	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%s", WebPort),
-		Handler: app.Routes,
-	}
+	srv := http_server.NewHTTPServer("debug")
 
-	err := srv.ListenAndServe()
-	if err != nil {
-		panic(err)
-	}
+	root := srv.Group("")
+	broker_controller.BrokerController(root)
+
+	srv.Run(fmt.Sprintf(":%s", WebPort))
 }

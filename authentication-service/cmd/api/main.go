@@ -1,6 +1,7 @@
 package main
 
 import (
+	authentication_controller "authentication/internal/controller/authentication"
 	http_server "authentication/internal/http"
 	data "authentication/internal/models"
 	"database/sql"
@@ -38,7 +39,12 @@ func main() {
 	// 	Models: data.New(conn),
 	// }
 
+	models := data.New(conn)
+
 	srv := http_server.NewHTTPServer("debug")
+	root := srv.Group("")
+
+	authentication_controller.AuthenticationController(root, models)
 
 	srv.Run(fmt.Sprintf(":%s", webPort))
 }
