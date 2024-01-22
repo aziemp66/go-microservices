@@ -1,12 +1,11 @@
 package main
 
 import (
+	http_server "authentication/internal/http"
 	data "authentication/internal/models"
-	"authentication/internal/routes"
 	"database/sql"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
@@ -39,16 +38,9 @@ func main() {
 	// 	Models: data.New(conn),
 	// }
 
-	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%s", webPort),
-		Handler: routes.Routes(),
-	}
+	srv := http_server.NewHTTPServer("debug")
 
-	err := srv.ListenAndServe()
-	if err != nil {
-		log.Panic(err)
-		return
-	}
+	srv.Run(fmt.Sprintf(":%s", webPort))
 }
 
 func connectToDB() *sql.DB {
