@@ -21,13 +21,13 @@ func (controller *controller) Authenticate(ctx *gin.Context) {
 
 	user, err := controller.Models.User.GetByEmail(req.Email)
 	if err != nil {
-		ctx.Error(http_error.NewNotFound("user or Password is wrong"))
+		ctx.Error(http_error.NewUnauthorized("user or Password is wrong"))
 		return
 	}
 
 	valid, err := controller.Models.User.PasswordMatches(req.Password)
 	if err != nil || !valid {
-		ctx.Error(http_error.NewNotFound("user or password is wrong"))
+		ctx.Error(http_error.NewUnauthorized("user or password is wrong"))
 		return
 	}
 
