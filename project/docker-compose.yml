@@ -49,7 +49,7 @@ services:
     volumes:
       - ../authentication-service/logs:/app/logs
     environment:
-      - "DSN=host=postgres port=5432 user=postgres password=password dbname=postgres sslmode=disable timezone=Asia/Jakarta connect_timeout=5"
+      - "DSN=host=postgres port=5432 user=postgres password=password dbname=users sslmode=disable timezone=Asia/Jakarta connect_timeout=5"
     depends_on:
       - postgres
       - broker-service
