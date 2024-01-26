@@ -37,7 +37,7 @@ type User struct {
 	Email     string    `json:"email"`
 	FirstName string    `json:"first_name,omitempty"`
 	LastName  string    `json:"last_name,omitempty"`
-	Password  string    `json:"-"`
+	Password  string    `json:"password"`
 	Active    int       `json:"active"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -252,8 +252,20 @@ func (u *User) ResetPassword(password string) error {
 // PasswordMatches uses Go's bcrypt package to compare a user supplied password
 // with the hash we have stored for a given user in the database. If the password
 // and hash match, we return true; otherwise, we return false.
-func (u *User) PasswordMatches(plainText string) (bool, error) {
-	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(plainText))
+func (u *User) PasswordMatches(email string, plainText string) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+	query := `select password from users where email = $1`
+
+	row := db.QueryRowContext(ctx, query, email)
+
+	var password string
+	err := row.Scan(&password)
+	if err != nil {
+		return false, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(password), []byte(plainText))
 	if err != nil {
 		switch {
 		case errors.Is(err, bcrypt.ErrMismatchedHashAndPassword):

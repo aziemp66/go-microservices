@@ -9,4 +9,5 @@ func BrokerController(router *gin.RouterGroup) {
 	c := &controller{}
 
 	router.POST("/", c.Broker)
+	router.POST("/handle", c.HandleSubmission)
 }

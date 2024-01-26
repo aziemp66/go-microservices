@@ -6,6 +6,7 @@ import (
 	"broker/internal/model/request"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,21 +29,21 @@ func Authenticate(ctx *gin.Context, a request.AuthPayload) {
 	}
 	defer response.Body.Close()
 
-	if response.StatusCode == http.StatusUnauthorized {
-		ctx.Error(http_error.NewUnauthorized(err.Error()))
-		return
-	} else if response.StatusCode == http.StatusBadRequest {
-		ctx.Error(http_error.NewBadRequest(err.Error()))
-		return
-	} else if response.StatusCode != http.StatusOK {
-		ctx.Error(err)
-		return
-	}
-
 	var jsonFromService http_server.Response
 	err = json.NewDecoder(response.Body).Decode(&jsonFromService)
 	if err != nil {
 		ctx.Error(http_error.NewBadRequest(err.Error()))
+		return
+	}
+
+	if response.StatusCode == http.StatusUnauthorized {
+		ctx.Error(http_error.NewUnauthorized(jsonFromService.Message))
+		return
+	} else if response.StatusCode == http.StatusBadRequest {
+		ctx.Error(http_error.NewBadRequest(jsonFromService.Message))
+		return
+	} else if response.StatusCode != http.StatusOK {
+		ctx.Error(errors.New(jsonFromService.Message))
 		return
 	}
 

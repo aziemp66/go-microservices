@@ -10,8 +10,8 @@ import (
 
 func (controller *controller) Authenticate(ctx *gin.Context) {
 	var req struct {
-		Email    string `json:"-"`
-		Password string `json:"-"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -21,13 +21,13 @@ func (controller *controller) Authenticate(ctx *gin.Context) {
 
 	user, err := controller.Models.User.GetByEmail(req.Email)
 	if err != nil {
-		ctx.Error(http_error.NewUnauthorized("user or Password is wrong"))
+		ctx.Error(http_error.NewUnauthorized(fmt.Sprintf("user with %s email is not found : %s", req.Email, err.Error())))
 		return
 	}
 
-	valid, err := controller.Models.User.PasswordMatches(req.Password)
+	valid, err := controller.Models.User.PasswordMatches(req.Email, req.Password)
 	if err != nil || !valid {
-		ctx.Error(http_error.NewUnauthorized("user or password is wrong"))
+		ctx.Error(http_error.NewUnauthorized(fmt.Sprintf("password is wrong : %s", err.Error())))
 		return
 	}
 

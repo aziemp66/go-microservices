@@ -3,6 +3,7 @@ package main
 import (
 	broker_controller "broker/internal/controller/broker"
 	http_server "broker/internal/http"
+	"broker/internal/http/middleware"
 	"fmt"
 	"log"
 )
@@ -15,6 +16,9 @@ func main() {
 	srv := http_server.NewHTTPServer("debug")
 
 	root := srv.Group("")
+
+	root.Use(middleware.ErrorHandler())
+
 	broker_controller.BrokerController(root)
 
 	srv.Run(fmt.Sprintf(":%s", WebPort))

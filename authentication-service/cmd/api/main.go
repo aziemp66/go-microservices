@@ -3,6 +3,7 @@ package main
 import (
 	authentication_controller "authentication/internal/controller/authentication"
 	http_server "authentication/internal/http"
+	"authentication/internal/http/middleware"
 	data "authentication/internal/models"
 	"database/sql"
 	"fmt"
@@ -43,6 +44,8 @@ func main() {
 
 	srv := http_server.NewHTTPServer("debug")
 	root := srv.Group("")
+
+	root.Use(middleware.ErrorHandler())
 
 	authentication_controller.AuthenticationController(root, models)
 
