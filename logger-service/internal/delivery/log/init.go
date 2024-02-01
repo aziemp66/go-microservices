@@ -5,13 +5,13 @@ import (
 	"log-service/internal/validation"
 )
 
-type LogDelivery struct {
+type logDelivery struct {
 	validation *validation.Validate
 	models     *data.Models
 }
 
-func NewLogDelivery(validation *validation.Validate, models *data.Models) *LogDelivery {
-	return &LogDelivery{
+func NewLogDelivery(validation *validation.Validate, models *data.Models) LogDelivery {
+	return &logDelivery{
 		validation: validation,
 		models:     models,
 	}

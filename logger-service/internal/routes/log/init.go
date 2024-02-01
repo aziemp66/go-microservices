@@ -7,8 +7,10 @@ import (
 )
 
 func LogRoutes(router fiber.Router, logDelivery log_delivery.LogDelivery) {
-	logRoutes := router.Group("/log")
-
-	logRoutes.Get("", logDelivery.GetAllLog)
-	logRoutes.Post("", logDelivery.CreateLog)
+	router.Get("", logDelivery.GetAllLog)
+	router.Get("/:id", logDelivery.GetLogByID)
+	router.Post("", logDelivery.CreateLog)
+	router.Put("/:id", logDelivery.UpdateLogByID)
+	router.Delete("/:id", logDelivery.DeleteLogByID)
+	router.Post("/clear", logDelivery.ClearLog)
 }

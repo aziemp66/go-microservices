@@ -86,7 +86,7 @@ func main() {
 	models := data.New(client)
 
 	logDelivery := log_delivery.NewLogDelivery(validate, &models)
-	log_routes.LogRoutes(root, *logDelivery)
+	log_routes.LogRoutes(root.Group("/log"), logDelivery)
 
 	app.Listen(fmt.Sprintf(":%s", webPort))
 }

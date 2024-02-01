@@ -94,13 +94,13 @@ func (l *LogEntry) GetOne(id string) (*LogEntry, error) {
 		return nil, err
 	}
 
-	var entry *LogEntry
-	err = collection.FindOne(ctx, bson.M{"_id": docID}).Decode(entry)
+	var entry LogEntry
+	err = collection.FindOne(ctx, bson.M{"_id": docID}).Decode(&entry)
 	if err != nil {
 		return nil, err
 	}
 
-	return entry, nil
+	return &entry, nil
 }
 
 func (l *LogEntry) DropCollection() error {
