@@ -9,5 +9,6 @@ import (
 func LogRoutes(router fiber.Router, logDelivery log_delivery.LogDelivery) {
 	logRoutes := router.Group("/log")
 
+	logRoutes.Get("", logDelivery.GetAllLog)
 	logRoutes.Post("", logDelivery.CreateLog)
 }

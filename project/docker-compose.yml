@@ -24,6 +24,15 @@ services:
       POSTGRES_DB: users
     volumes:
       - ./db-data/postgres/:/var/lib/postgresql/data/
+  mongo:
+    image: "mongo:6.0"
+    ports:
+      - "17027:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - ./db-data/mongodb:/data/db
   broker-service:
     build:
       context: ../broker-service
@@ -53,3 +62,19 @@ services:
     depends_on:
       - postgres
       - broker-service
+  logger-service:
+    build:
+      context: ../logger-service
+      dockerfile: ../logger-service/logger-service.dockerfile
+    restart: always
+    ports:
+      - "8082:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      - MONGO_USERNAME=admin
+      - MONGO_PASSWORD=password
+    depends_on:
+      - broker-service
+      - mongo

@@ -20,7 +20,7 @@ func (d *LogDelivery) CreateLog(c *fiber.Ctx) error {
 	}
 
 	err := d.models.LogEntry.Insert(data.LogEntry{
-		Name: req.Name,
+		Name: *req.Name,
 		Data: req.Data,
 	})
 	if err != nil {
@@ -30,6 +30,20 @@ func (d *LogDelivery) CreateLog(c *fiber.Ctx) error {
 	c.Status(fiber.StatusCreated).JSON(http_server.Response{
 		Message: "Berhasil Menambahkan Log",
 		Value:   req,
+	})
+
+	return nil
+}
+
+func (d *LogDelivery) GetAllLog(c *fiber.Ctx) error {
+	logs, err := d.models.LogEntry.All()
+	if err != nil {
+		return http_error.NewError(err, fiber.StatusBadRequest, "Gagal Mengambil Semua Log")
+	}
+
+	c.Status(fiber.StatusOK).JSON(http_server.Response{
+		Message: "Berhasil Mengambil Semua Log",
+		Value:   logs,
 	})
 
 	return nil

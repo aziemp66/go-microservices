@@ -59,7 +59,7 @@ func (l *LogEntry) All() ([]*LogEntry, error) {
 	opts := options.Find()
 	opts.SetSort(bson.D{{Key: "created_at", Value: -1}})
 
-	cursor, err := collection.Find(context.TODO(), bson.D{}, opts)
+	cursor, err := collection.Find(ctx, bson.D{}, opts)
 	if err != nil {
 		log.Println("Finding all  docs error : ", err)
 		return nil, err
@@ -69,14 +69,14 @@ func (l *LogEntry) All() ([]*LogEntry, error) {
 	var logs []*LogEntry
 
 	for cursor.Next(ctx) {
-		var item *LogEntry
+		var item LogEntry
 
-		err := cursor.Decode(item)
+		err := cursor.Decode(&item)
 		if err != nil {
 			log.Println("Error Decoding Log Into Slice")
 			return nil, err
 		} else {
-			logs = append(logs, item)
+			logs = append(logs, &item)
 		}
 	}
 
