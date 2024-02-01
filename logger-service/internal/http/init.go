@@ -19,8 +19,7 @@ func NewHttpServer() *fiber.App {
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
-		AllowHeaders: "Origin, Content-Type, Accept, Authorization, X-CSRF-TOKEN",
-		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
+		AllowHeaders: "Origin,Content-Type,Accept,Authorization,X-CSRF-TOKEN",
 	}))
 
 	app.Get("", func(c *fiber.Ctx) error {
