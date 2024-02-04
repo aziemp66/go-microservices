@@ -22,7 +22,7 @@ func (d *logDelivery) CreateLog(c *fiber.Ctx) error {
 	}
 
 	err := d.models.LogEntry.Insert(data.LogEntry{
-		Name: *req.Name,
+		Name: req.Name,
 		Data: req.Data,
 	})
 	if err != nil {
@@ -83,7 +83,7 @@ func (d *logDelivery) UpdateLogByID(c *fiber.Ctx) error {
 	}
 
 	d.models.LogEntry.ID = id
-	d.models.LogEntry.Name = *req.Name
+	d.models.LogEntry.Name = req.Name
 	d.models.LogEntry.Data = req.Data
 
 	result, err := d.models.LogEntry.Update()

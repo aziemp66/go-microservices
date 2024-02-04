@@ -1,6 +1,7 @@
 package authentication_controller
 
 import (
+	log_adapter "authentication/internal/adapter/log"
 	http_server "authentication/internal/http"
 	http_error "authentication/internal/http/error"
 	"fmt"
@@ -19,6 +20,12 @@ func (controller *controller) Authenticate(ctx *gin.Context) {
 		return
 	}
 
+	err := log_adapter.LogRequest("authentication", fmt.Sprintf("%s login attempt", req.Email))
+	if err != nil {
+		ctx.Error(http_error.NewBadRequest(err.Error()))
+		return
+	}
+
 	user, err := controller.Models.User.GetByEmail(req.Email)
 	if err != nil {
 		ctx.Error(http_error.NewUnauthorized(fmt.Sprintf("user with %s email is not found : %s", req.Email, err.Error())))
@@ -28,6 +35,12 @@ func (controller *controller) Authenticate(ctx *gin.Context) {
 	valid, err := controller.Models.User.PasswordMatches(req.Email, req.Password)
 	if err != nil || !valid {
 		ctx.Error(http_error.NewUnauthorized(fmt.Sprintf("password is wrong : %s", err.Error())))
+		return
+	}
+
+	err = log_adapter.LogRequest("authentication", fmt.Sprintf("%s logged in", req.Email))
+	if err != nil {
+		ctx.Error(http_error.NewBadRequest(err.Error()))
 		return
 	}
 

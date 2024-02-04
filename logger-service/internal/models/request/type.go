@@ -1,11 +1,11 @@
 package request
 
 type CreateLogEntry struct {
-	Name *string `json:"name" validate:"required,gt=1"`
-	Data any     `json:"data" validate:"required"`
+	Name string `json:"name" validate:"required,gt=1"`
+	Data any    `json:"data" validate:"required"`
 }
 
 type UpdateLogEntry struct {
-	Name *string `json:"name" validate:"required,gt=1"`
-	Data any     `json:"data" validate:"required"`
+	Name string `json:"name" validate:"required,gt=1"`
+	Data any    `json:"data" validate:"required"`
 }
