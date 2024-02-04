@@ -49,7 +49,7 @@ func LogItem(ctx *gin.Context, l request.LogPayload) {
 	} else if response.StatusCode == http.StatusNotFound {
 		ctx.Error(http_error.NewNotFound(jsonFromService.Message))
 		return
-	} else if response.StatusCode != http.StatusOK {
+	} else if response.StatusCode >= 300 && response.StatusCode < 600 {
 		ctx.Error(errors.New(jsonFromService.Message))
 		return
 	}

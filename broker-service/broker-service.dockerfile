@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 go build -o brokerApp ./cmd/api
+RUN go build -o brokerApp ./cmd/api
 
 # Path: config/Dockerfile.backend
 
