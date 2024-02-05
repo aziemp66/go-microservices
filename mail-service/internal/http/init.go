@@ -38,6 +38,7 @@ func errorHandler(c *fiber.Ctx, err error) error {
 		log.Error(httpError.Raw)
 		return c.Status(httpError.Code).JSON(errResponse{
 			Message: httpError.Error(),
+			Error:   err,
 		})
 	} else {
 		log.Error(err)

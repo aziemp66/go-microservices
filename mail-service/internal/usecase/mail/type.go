@@ -1,4 +1,8 @@
-package mail_service
+package mail_usecase
+
+type MailUsecase interface {
+	SendSMTPMessage(msg Message) error
+}
 
 type Mail struct {
 	Domain      string

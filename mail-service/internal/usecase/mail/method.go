@@ -1,7 +1,8 @@
-package mail_service
+package mail_usecase
 
 import (
 	"bytes"
+	"embed"
 	"html/template"
 	"time"
 
@@ -69,16 +70,17 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 	return nil
 }
 
-func (m *Mail) buildHTMLMessage(msg Message) (string, error) {
-	templateToRender := "./templates/mail.gohtml"
+//go:embed templates/*.gohtml
+var templateToRender embed.FS
 
-	t, err := template.New("email-html").ParseFiles(templateToRender)
+func (m *Mail) buildHTMLMessage(msg Message) (string, error) {
+	t, err := template.ParseFS(templateToRender)
 	if err != nil {
 		return "", err
 	}
 
 	var tpl bytes.Buffer
-	if err := t.ExecuteTemplate(&tpl, "body", msg.Data); err != nil {
+	if err := t.ExecuteTemplate(&tpl, "mail.html.gohtml", msg.Data); err != nil {
 		return "", err
 	}
 
@@ -92,15 +94,13 @@ func (m *Mail) buildHTMLMessage(msg Message) (string, error) {
 }
 
 func (m *Mail) buildPlainTextMessage(msg Message) (string, error) {
-	templateToRender := "./templates/mail.plain.gohtml"
-
-	t, err := template.New("email-plain").ParseFiles(templateToRender)
+	t, err := template.ParseFS(templateToRender)
 	if err != nil {
 		return "", err
 	}
 
 	var tpl bytes.Buffer
-	if err := t.ExecuteTemplate(&tpl, "body", msg.Data); err != nil {
+	if err := t.ExecuteTemplate(&tpl, "mail.plain.gohtml", msg.Data); err != nil {
 		return "", err
 	}
 
@@ -117,6 +117,9 @@ func (m *Mail) inlineCSS(s string) (string, error) {
 	}
 
 	prem, err := premailer.NewPremailerFromString(s, &options)
+	if err != nil {
+		return "", err
+	}
 
 	html, err := prem.Transform()
 	if err != nil {
