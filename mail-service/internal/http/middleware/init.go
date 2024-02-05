@@ -22,9 +22,15 @@ func ValidationMiddleware() (fiber.Handler, *validation.Validation) {
 			en := en.New()
 			id := id.New()
 			t := ut.New(en, id)
-			lang := c.GetReqHeaders()["Accept-Language"][0]
+			languages := c.GetReqHeaders()["Accept-Language"]
+			var lang string
+			if len(languages) == 0 {
+				lang = "en"
+			} else {
+				lang = languages[0]
+			}
 
-			if lang == "" || lang == "en" {
+			if lang == "en" {
 				trans, isFound := t.FindTranslator("en")
 				if !isFound {
 					return errors.New("english language translator not found")

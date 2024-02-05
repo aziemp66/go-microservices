@@ -42,7 +42,7 @@ func main() {
 
 	en := en.New()
 	id := id.New()
-	uni := ut.New(id, id)
+	uni := ut.New(en, id)
 
 	trans, isFound := uni.GetTranslator("id")
 	if !isFound {
