@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/id"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -39,7 +40,7 @@ type Config struct {
 func main() {
 	app := http_server.NewHttpServer()
 
-	// en := en.New()
+	en := en.New()
 	id := id.New()
 	uni := ut.New(id, id)
 
@@ -50,7 +51,7 @@ func main() {
 
 	v := validator.New()
 	v.RegisterTagNameFunc(func(field reflect.StructField) string {
-		name := strings.SplitN(field.Tag.Get("json"), ",", 2)[0]
+		name := strings.SplitN(field.Tag.Get("id"), ",", 2)[0]
 		// skip if tag key says it should be ignored
 		if name == "-" {
 			return ""
