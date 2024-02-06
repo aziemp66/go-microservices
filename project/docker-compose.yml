@@ -93,5 +93,14 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    environment:
+      MAIL_DOMAIN: localhost
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      MAIL_ENCRYPTION: none
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      FROM_NAME: "Azie Melza Pratama"
+      FROM_ADDRESS: "aziemp55@example.com"
     depends_on:
       - mailhog
