@@ -3,6 +3,7 @@ package broker_controller
 import (
 	authentication_adapter "broker/internal/adapter/authentication"
 	log_adapter "broker/internal/adapter/log"
+	mail_adapter "broker/internal/adapter/mail"
 	http_server "broker/internal/http"
 	http_error "broker/internal/http/error"
 	"broker/internal/model/request"
@@ -29,6 +30,8 @@ func (controller *controller) HandleSubmission(ctx *gin.Context) {
 		authentication_adapter.Authenticate(ctx, req.Auth)
 	case "log":
 		log_adapter.LogItem(ctx, req.Log)
+	case "mail":
+		mail_adapter.SendMail(ctx, req.Mail)
 	default:
 		ctx.Error(http_error.NewBadRequest("Unknown Action"))
 		return
