@@ -21,7 +21,7 @@ func ValidationMiddleware() (fiber.Handler, *validation.Validation) {
 	return func(c *fiber.Ctx) error {
 			en := en.New()
 			id := id.New()
-			t := ut.New(en, id)
+			t := ut.New(en, en, id)
 			languages := c.GetReqHeaders()["Accept-Language"]
 			var lang string
 			if len(languages) == 0 {

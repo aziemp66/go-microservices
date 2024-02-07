@@ -21,6 +21,6 @@ type Message struct {
 	To          string
 	Subject     string
 	Attachments []string
-	Data        any
+	Data        string
 	DataMap     map[string]any
 }

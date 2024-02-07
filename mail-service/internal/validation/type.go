@@ -48,7 +48,7 @@ func (v *Validation) Validate(data any) *http_error.Error {
 		// var structErr valError
 		for _, e := range errs {
 			// can translate each error one at a time.
-			return http_error.NewError(err, fiber.StatusBadRequest, e.Translate(v.Trans))
+			return http_error.NewError(e, fiber.StatusBadRequest, e.Translate(v.Trans))
 		}
 	}
 	return nil

@@ -15,13 +15,14 @@ import (
 func SendMail(ctx *gin.Context, m request.MailPayload) {
 	jsonData, _ := json.MarshalIndent(m, "", "\t")
 
-	mailServiceURL := "http://mail-service/mail"
+	mailServiceURL := "http://mail-service/api/mail"
 
 	request, err := http.NewRequest("POST", mailServiceURL, bytes.NewBuffer(jsonData))
 	if err != nil {
 		ctx.Error(http_error.NewBadRequest(err.Error()))
 		return
 	}
+	request.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
 

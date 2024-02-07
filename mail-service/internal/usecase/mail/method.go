@@ -74,13 +74,13 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 var templateToRender embed.FS
 
 func (m *Mail) buildHTMLMessage(msg Message) (string, error) {
-	t, err := template.ParseFS(templateToRender)
+	t, err := template.ParseFS(templateToRender, "templates/*.gohtml")
 	if err != nil {
 		return "", err
 	}
 
 	var tpl bytes.Buffer
-	if err := t.ExecuteTemplate(&tpl, "mail.html.gohtml", msg.Data); err != nil {
+	if err := t.ExecuteTemplate(&tpl, "mail.html.gohtml", msg.DataMap); err != nil {
 		return "", err
 	}
 
@@ -94,13 +94,13 @@ func (m *Mail) buildHTMLMessage(msg Message) (string, error) {
 }
 
 func (m *Mail) buildPlainTextMessage(msg Message) (string, error) {
-	t, err := template.ParseFS(templateToRender)
+	t, err := template.ParseFS(templateToRender, "templates/*.gohtml")
 	if err != nil {
 		return "", err
 	}
 
 	var tpl bytes.Buffer
-	if err := t.ExecuteTemplate(&tpl, "mail.plain.gohtml", msg.Data); err != nil {
+	if err := t.ExecuteTemplate(&tpl, "mail.plain.gohtml", msg.DataMap); err != nil {
 		return "", err
 	}
 
