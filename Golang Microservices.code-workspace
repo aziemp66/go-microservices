@@ -23,10 +23,6 @@
 		{
 			"name": "mail-service",
 			"path": "mail-service"
-		},
-		{
-			"name": "listener-service",
-			"path": "listener-service"
 		}
 	]
 }
