@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o loggerApp ./cmd/api
+RUN go build -o loggerConsumer ./cmd/consumer
 
 # Path: config/Dockerfile.backend
 
@@ -16,6 +16,6 @@ FROM alpine:3.18
 
 WORKDIR /app
 
-COPY --from=builder /app/loggerApp /app/loggerApp
+COPY --from=builder /app/loggerConsumer /app/loggerConsumer
 
-ENTRYPOINT [ "/app/loggerApp" ] 
+ENTRYPOINT [ "/app/loggerConsumer" ] 

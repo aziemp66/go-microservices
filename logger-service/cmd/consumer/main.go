@@ -26,8 +26,8 @@ import (
 var client *mongo.Client
 
 const (
-	mongoURL    = "mongodb://localhost:27017"
-	rabbitmqURL = "amqp://admin:admin@localhost:5672/"
+	mongoURL    = "mongodb://mongo:27017"
+	rabbitmqURL = "amqp://user:password@rabbitmq:5672/"
 )
 
 func main() {
@@ -92,8 +92,8 @@ func connectToMongo() (*mongo.Client, error) {
 	// create connection options
 	clientOptions := options.Client().ApplyURI(mongoURL)
 	clientOptions.SetAuth(options.Credential{
-		Username: os.Getenv(""),
-		Password: os.Getenv(""),
+		Username: os.Getenv("MONGO_USERNAME"),
+		Password: os.Getenv("MONGO_PASSWORD"),
 	})
 
 	// connect

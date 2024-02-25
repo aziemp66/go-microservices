@@ -62,10 +62,10 @@ services:
     depends_on:
       - postgres
       - broker-service
-  logger-service:
+  logger-api-service:
     build:
       context: ../logger-service
-      dockerfile: ../logger-service/logger-service.dockerfile
+      dockerfile: ../logger-service/logger-service-api.dockerfile
     restart: always
     ports:
       - "8082:80"
@@ -117,3 +117,20 @@ services:
       replicas: 1
     volumes:
       - "./db-data/rabbitmq:/var/lib/rabbitmq/"
+  logger-consumer-service:
+    build:
+      context: ../logger-service
+      dockerfile: ../logger-service/logger-service-consumer.dockerfile
+    restart: always
+    ports:
+      - "8182:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      - MONGO_USERNAME=admin
+      - MONGO_PASSWORD=password
+    depends_on:
+      - broker-service
+      - mongo
+      - rabbitmq
