@@ -8,19 +8,20 @@ import (
 )
 
 func NewConsumer(conn string, models *data.Models, validate *validation.Validate) (*consumer, error) {
-	connection, err := amqp.Dial("amqp://admin:password@rabbitmq:5672/")
+	connection, err := amqp.Dial(conn)
 	if err != nil {
 		return nil, err
 	}
 
-	channel, err := connection.Channel()
+	Channel, err := connection.Channel()
 	if err != nil {
 		return nil, err
 	}
 
 	return &consumer{
-		channel:    channel,
-		connection: connection,
+		Channel:    Channel,
+		Connection: connection,
 		models:     models,
+		validate:   validate,
 	}, nil
 }

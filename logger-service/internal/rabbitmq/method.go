@@ -3,17 +3,17 @@ package rabbitmq
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"log-service/internal/data"
 	"log-service/internal/models/request"
 	"strings"
-	"sync"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func (consumer *consumer) declare() error {
-	err := consumer.channel.ExchangeDeclare(
+	err := consumer.Channel.ExchangeDeclare(
 		"logger",
 		"topic",
 		false,
@@ -26,7 +26,7 @@ func (consumer *consumer) declare() error {
 		return err
 	}
 
-	q, err := consumer.channel.QueueDeclare(
+	q, err := consumer.Channel.QueueDeclare(
 		"log",
 		false,
 		false,
@@ -38,7 +38,7 @@ func (consumer *consumer) declare() error {
 		return err
 	}
 
-	err = consumer.channel.QueueBind(
+	err = consumer.Channel.QueueBind(
 		q.Name,
 		"log.*.*",
 		"logger",
@@ -52,17 +52,20 @@ func (consumer *consumer) declare() error {
 	return nil
 }
 
-func (consumer *consumer) Consume(ctx context.Context, wg *sync.WaitGroup) {
-	defer wg.Done()
+func (consumer *consumer) Consume(ctx context.Context) {
+	forever := make(chan bool)
 	err := consumer.declare()
 	if err != nil {
 		log.Fatalf("Failed to declare customer : %s", err.Error())
 	}
 
-	msgs, err := consumer.channel.ConsumeWithContext(ctx, "log", "log-consumer", false, false, false, false, nil)
+	msgs, err := consumer.Channel.ConsumeWithContext(ctx, "log", "log-consumer", false, false, false, false, nil)
 	if err != nil {
 		log.Fatalf("Failed to declare consumer : %s", err.Error())
 	}
+
+	fmt.Println("Successfuly Connect to rabbitMQ instance")
+	fmt.Println("[*] waiting message..")
 
 	for d := range msgs {
 		keys := strings.Split(d.RoutingKey, ".")
@@ -72,18 +75,20 @@ func (consumer *consumer) Consume(ctx context.Context, wg *sync.WaitGroup) {
 			consumer.createLogEntry(ctx, d)
 		}
 	}
+
+	<-forever
 }
 
 func (consumer *consumer) createLogEntry(ctx context.Context, d amqp.Delivery) {
 	var createLogEntry request.CreateLogEntry
 	err := json.Unmarshal(d.Body, &createLogEntry)
 	if err != nil {
-		handleRequeue(ctx, consumer.channel, d)
+		handleRequeue(ctx, consumer.Channel, d)
 		log.Fatalf("Failed parsing json to struct : %s", err.Error())
 	}
 
 	if err := consumer.validate.Validate(createLogEntry); err != nil {
-		handleRequeue(ctx, consumer.channel, d)
+		handleRequeue(ctx, consumer.Channel, d)
 		log.Fatalf("Failed validating json : %s", err.Error())
 	}
 
@@ -92,7 +97,7 @@ func (consumer *consumer) createLogEntry(ctx context.Context, d amqp.Delivery) {
 		Data: createLogEntry.Data,
 	})
 	if err != nil {
-		handleRequeue(ctx, consumer.channel, d)
+		handleRequeue(ctx, consumer.Channel, d)
 		log.Fatalf("Failed inserting data to database : %s", err.Error())
 	}
 

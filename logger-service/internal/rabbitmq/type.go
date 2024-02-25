@@ -8,8 +8,8 @@ import (
 )
 
 type consumer struct {
-	connection *amqp.Connection
-	channel    *amqp.Channel
+	Connection *amqp.Connection
+	Channel    *amqp.Channel
 	models     *data.Models
 	validate   *validation.Validate
 }
