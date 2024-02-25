@@ -1,11 +1,10 @@
 package validation
 
 import (
-	http_error "log-service/internal/http/error"
+	"errors"
 
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
 )
 
 type Validate struct {
@@ -13,7 +12,7 @@ type Validate struct {
 	Trans     ut.Translator
 }
 
-func (v *Validate) Validate(data any) *http_error.Error {
+func (v *Validate) Validate(data any) error {
 	// type User struct {
 	// 	Username string `validate:"required"`
 	// 	Tagline  string `validate:"required,lt=10"`
@@ -48,7 +47,7 @@ func (v *Validate) Validate(data any) *http_error.Error {
 		// var structErr valError
 		for _, e := range errs {
 			// can translate each error one at a time.
-			return http_error.NewError(err, fiber.StatusBadRequest, e.Translate(v.Trans))
+			return errors.New(e.Translate(v.Trans))
 		}
 	}
 	return nil

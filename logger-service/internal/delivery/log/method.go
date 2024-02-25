@@ -18,7 +18,7 @@ func (d *logDelivery) CreateLog(c *fiber.Ctx) error {
 	}
 
 	if err := d.validation.Validate(&req); err != nil {
-		return err
+		return http_error.NewError(err, fiber.StatusBadRequest, err.Error())
 	}
 
 	err := d.models.LogEntry.Insert(data.LogEntry{
@@ -80,6 +80,10 @@ func (d *logDelivery) UpdateLogByID(c *fiber.Ctx) error {
 	var req request.UpdateLogEntry
 	if err := c.BodyParser(&req); err != nil {
 		return http_error.NewError(err, fiber.StatusBadRequest, "Gagal Parsing Body")
+	}
+
+	if err := d.validation.Validate(&req); err != nil {
+		return http_error.NewError(err, fiber.StatusBadRequest, err.Error())
 	}
 
 	d.models.LogEntry.ID = id
